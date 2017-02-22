@@ -138,8 +138,8 @@ namespace WebCreateQR.Controllers
                 Format = BarcodeFormat.QR_CODE,
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = 20,
-                    Width = 420
+                    Height = 400,
+                    Width = 400
                 }
             };
             writer.Write(qr)
