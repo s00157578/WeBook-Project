@@ -1,9 +1,7 @@
-﻿using Microsoft.SqlServer.Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -13,115 +11,111 @@ using ZXing;
 
 namespace WebCreateQR.Controllers
 {
-    public class EventsController : Controller
+    public class ContactsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Events
+        // GET: Contacts
         public ActionResult Index()
         {
-            return View(db.Events.ToList());
+            return View(db.Contacts.ToList());
         }
 
-        // GET: Events/Details/5
+        // GET: Contacts/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.Events.Find(id);
-            if (@event == null)
+            Contacts contacts = db.Contacts.Find(id);
+            if (contacts == null)
             {
                 return HttpNotFound();
             }
-            return View(@event);
+            return View(contacts);
         }
 
-        // GET: Events/Create
+        // GET: Contacts/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Events/Create
+        // POST: Contacts/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EventId,EventName,EventLocation,StartDateTime,EndDateTime,TicketsAvailable")] Event @event)
+        public ActionResult Create([Bind(Include = "ContactID,DisplayName,PhoneNumber,EmailAdress")] Contacts contacts)
         {
             if (ModelState.IsValid)
             {
-                @event.RemainingTickets = @event.TicketsAvailable;
-               
-                db.Events.Add(@event);
+                db.Contacts.Add(contacts);
                 db.SaveChanges();
-                string qrData = "event" + "," + @event.EventId + "," + @event.EventName + "," + @event.EventLocation + "," + @event.StartDateTime + "," + @event.EndDateTime;
-                QrCreate(qrData, @event.EventName);
+                string qrData = "contact" +"," + @contacts.DisplayName + "," + @contacts.PhoneNumber + "," + @contacts.EmailAdress;
+                QrCreate(qrData, @contacts.DisplayName);
                 return RedirectToAction("Index");
             }
 
-            return View(@event);
+            return View(contacts);
         }
-        // GET: Events/Edit/5
+
+        // GET: Contacts/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.Events.Find(id);
-            if (@event == null)
+            Contacts contacts = db.Contacts.Find(id);
+            if (contacts == null)
             {
                 return HttpNotFound();
             }
-            return View(@event);
+            return View(contacts);
         }
 
-        // POST: Events/Edit/5
+        // POST: Contacts/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EventId,EventName,EventLocation,StartDateTime,EndDateTime,TicketsAvailable,RemainingTickets")] Event @event)
+        public ActionResult Edit([Bind(Include = "ContactID,DisplayName,PhoneNumber,EmailAdress")] Contacts contacts)
         {
             if (ModelState.IsValid)
             {
-                if (@event.TicketsAvailable >= @event.RemainingTickets)
-                {
-                    db.Entry(@event).State = EntityState.Modified;
-                    db.SaveChanges();
-                    string qrData = "event" + "," + @event.EventId + "," + @event.EventName + "," + @event.EventLocation + "," + @event.StartDateTime + "," + @event.EndDateTime;
-                    QrCreate(qrData, @event.EventName);
-                    return RedirectToAction("Index");
-                }
+                db.Entry(contacts).State = EntityState.Modified;
+                db.SaveChanges();
+                string qrData = "contact" + "," + @contacts.DisplayName + "," + @contacts.PhoneNumber + "," + @contacts.EmailAdress;
+                QrCreate(qrData, @contacts.DisplayName);
+                return RedirectToAction("Index");
             }
-            return View(@event);
+            return View(contacts);
         }
 
-        // GET: Events/Delete/5
+        // GET: Contacts/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.Events.Find(id);
-            if (@event == null)
+            Contacts contacts = db.Contacts.Find(id);
+            if (contacts == null)
             {
                 return HttpNotFound();
             }
-            return View(@event);
+            return View(contacts);
         }
 
-        // POST: Events/Delete/5
+        // POST: Contacts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Event @event = db.Events.Find(id);
-            db.Events.Remove(@event);
+            Contacts contacts = db.Contacts.Find(id);
+            db.Contacts.Remove(contacts);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -134,7 +128,6 @@ namespace WebCreateQR.Controllers
             }
             base.Dispose(disposing);
         }
-        //creating and saving QrCode
         public void QrCreate(string qr, string saveTitle)
         {
 
@@ -148,7 +141,7 @@ namespace WebCreateQR.Controllers
                 }
             };
             writer.Write(qr)
-            .Save(@"C:\Users\Kevin\Desktop\"+ saveTitle+".bmp");
+            .Save(@"C:\Users\Kevin\Desktop\" + saveTitle + ".bmp");
         }
     }
 }
