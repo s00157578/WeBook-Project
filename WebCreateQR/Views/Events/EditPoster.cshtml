@@ -1,0 +1,92 @@
+﻿@model WebCreateQR.Models.Event
+
+@{
+    ViewBag.Title = "EditPoster";
+}
+
+<h2>EditPoster</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Event</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.EventId)
+
+        <div class="col-md-4">
+            <div class="btn btn-primary">
+                <input type="file" id="chooseImg" />
+            </div>
+        </div>
+        <hr />
+
+        <div id="showImg" class="thumnail" style="display:none">
+            <img class="img-responsive" id="chosenImg" />
+            <div class="caption">
+                <a href="#" onclick="Clear()"><i class="glyphicon glyphicon-trash"></i></a>
+                <span id="desc"></span>
+            </div>
+            <a href="#" class="btn btn-default" onclick="UploadImg()">Upload</a>
+        </div>
+
+        <div class="col-md-2 thumnail" id="uploadedImg"></div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#chooseImg").change(function () {
+                var file = this.files;
+                if (file && file[0]) {
+                    ReadImg(file[0]);
+                }
+            })
+        })
+
+        function ReadImg(file) {
+            var reader = new FileReader;
+            var image = new Image;
+
+            reader.readAsDataURL(file);
+            reader.onload = function (_file) {
+
+
+                image.src = _file.target.result;
+                image.onload = function () {
+                    var height = this.height;
+                    var width = this.width;
+                    var type = file.type;
+                    var size = ~~(file.size / 1024) + "KB";
+
+                    $("#chosenImg").attr('src', _file.target.result);
+                    $("#desc").text("Size:" + size + " | " + height + " X " + width + " | " + type + "");
+                    $("#imgPreview").show();
+                }
+            }
+
+        }
+    </script>
+
