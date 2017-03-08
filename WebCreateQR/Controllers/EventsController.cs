@@ -121,7 +121,7 @@ namespace WebCreateQR.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(@event).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(@event);

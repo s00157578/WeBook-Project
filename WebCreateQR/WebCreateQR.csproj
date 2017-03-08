@@ -259,8 +259,6 @@
     <Content Include="Views\Events\Edit.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Events\EditPoster.cshtml" />
-    <Content Include="Views\Events\View.cshtml" />
-    <Content Include="Views\Events\ep.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
