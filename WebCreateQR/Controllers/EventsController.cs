@@ -178,7 +178,7 @@ namespace WebCreateQR.Controllers
                 }
             };
             writer.Write(qr)
-            .Save(@"C:\Users\Kevin\Desktop\"+ saveTitle+".bmp");
+            .Save(@"C:\Users\Sean's PC\Desktop\"+ saveTitle+".bmp");
         }
     }
 }
