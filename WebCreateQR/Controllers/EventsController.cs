@@ -57,8 +57,10 @@ namespace WebCreateQR.Controllers
                
                 db.Events.Add(@event);
                 db.SaveChanges();
+                Bitmap storedQr;
                 string qrData = "event" + "," + @event.EventId + "," + @event.EventName + "," + @event.EventLocation + "," + @event.StartDateTime + "," + @event.EndDateTime;
-                QrCreate(qrData, @event.EventName);
+                storedQr = QrCreate(qrData, @event.EventName);
+                storedQr.Save(@"C:\Users\kevin\Desktop\" + @event.EventName + ".bmp");
                 return RedirectToAction("Index");
             }
 
@@ -92,10 +94,42 @@ namespace WebCreateQR.Controllers
                 {
                     db.Entry(@event).State = EntityState.Modified;
                     db.SaveChanges();
+                    Bitmap storedQr;
                     string qrData = "event" + "," + @event.EventId + "," + @event.EventName + "," + @event.EventLocation + "," + @event.StartDateTime + "," + @event.EndDateTime;
-                    QrCreate(qrData, @event.EventName);
+                    storedQr = QrCreate(qrData, @event.EventName);
+                    storedQr.Save(@"C:\Users\kevin\Desktop\" + @event.EventName + ".bmp");
                     return RedirectToAction("Index");
                 }
+            }
+            return View(@event);
+        }
+
+        public ActionResult EditPoster(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Event @event = db.Events.Find(id);
+            if (@event == null)
+            {
+                return HttpNotFound();
+            }
+            return View(@event);
+        }
+
+        // POST: Events/EditPoster/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPoster([Bind(Include = "EventId,EventName,EventLocation,StartDateTime,EndDateTime,TicketsAvailable,RemainingTickets")] Event @event)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(@event).State = EntityState.Modified;
+                //db.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(@event);
         }
@@ -135,9 +169,9 @@ namespace WebCreateQR.Controllers
             base.Dispose(disposing);
         }
         //creating and saving QrCode
-        public void QrCreate(string qr, string saveTitle)
+        public Bitmap QrCreate(string qr, string saveTitle)
         {
-
+            Bitmap storedQr;
             var writer = new ZXing.BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
@@ -147,8 +181,8 @@ namespace WebCreateQR.Controllers
                     Width = 400
                 }
             };
-            writer.Write(qr)
-            .Save(@"C:\Users\Kevin\Desktop\"+ saveTitle+".bmp");
+            storedQr = writer.Write(qr);
+            return storedQr;
         }
     }
 }
